@@ -4,14 +4,14 @@
       <div class="title">
         <img src="../../assets/img/logo_index.png" alt="">
       </div>
-      <el-form status-icon :model="loginForm" :rules="loginRules">
+      <el-form status-icon ref="myForm" :model="loginForm" :rules="loginRules">
         <el-form-item prop="mobile">
           <!-- 手机号码 -->
           <el-input v-model="loginForm.mobile" placeholder="请输入手机号码"></el-input>
         </el-form-item>
-        <el-form-item prop="cade">
+        <el-form-item prop="code">
           <!-- 验证码 -->
-          <el-input v-model="loginForm.cade" placeholder="请输入验证码" style="width:65%"></el-input>
+          <el-input v-model="loginForm.code" placeholder="请输入验证码" style="width:65%"></el-input>
           <el-button style="float:right" >发送验证码</el-button>
         </el-form-item>
         <el-form-item prop="agree">
@@ -47,16 +47,16 @@ export default {
     return {
       loginForm: {
         mobile: '', // 手机号
-        cade: '', // 验证码
+        code: '', // 验证码
         agree: false // 是否同意协议
       },
       loginRules: {
         mobile: [
-          { required: true, trigger: 'blur', message: '请输入您的手机号' },
+          { required: true, message: '请输入您的手机号' },
           { pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号' }
         ],
-        cade: [
-          { required: true, trigger: 'blur', message: '请输入验证码' },
+        code: [
+          { required: true, message: '请输入验证码' },
           { pattern: /^\d{6}$/, message: '请输入正确的验证码' }
         ],
         agree: [{ validator }]
@@ -65,9 +65,22 @@ export default {
   },
   methods: {
     login () {
-      this.$refs.myForm.validate(function (isOk) {
+      this.$refs.myForm.validate((isOk) => {
         if (isOk) {
-          console.log('校验成功')
+          this.$axios({
+            url: '/authorizations',
+            data: this.loginForm,
+            method: 'post'
+          }).then(res => {
+            // console.log(res.data)
+            window.localStorage.setItem('user-token', res.data.data.token)
+            this.$router.push('/layout') // 页面跳转
+          }).catch(() => {
+            this.$message({
+              message: '手机号或验证码错误',
+              type: 'warning'
+            })
+          })
         }
       })
     }
