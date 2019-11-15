@@ -42,29 +42,49 @@
             <span>共找到59806条符合条件的内容</span>
         </div>
         <el-table
-        :data="tableData"
+        :data="articles"
         style="width: 100%">
             <el-table-column
                 prop="date"
                 label="封面"
                 width="180">
+                <template slot-scope="scope">
+                    <img width='60' :src="scope.row.cover.images[0]">
+                </template>
             </el-table-column>
             <el-table-column
-                prop="name"
-                label="姓名"
+                prop="title"
+                label="标题"
                 width="180">
             </el-table-column>
             <el-table-column
-                prop="address"
+                prop="status"
                 label="状态">
+                <template slot-scope="scope">
+                    <!-- <span v-show="scope.row.status===0">草稿</span>
+                    <span v-show="scope.row.status===1">待审核</span>
+                    <span v-show="scope.row.status===2">审核通过</span>
+                    <span v-show="scope.row.status===3">审核失败</span>
+                    <span v-show="scope.row.status===4">已删除</span> -->
+
+                    <!-- <span>{{ articleStatus[scope.row.status].label }}</span> -->
+
+                    <el-tag :type="articleStatus[scope.row.status].type">
+                        {{ articleStatus[scope.row.status].label }}
+                    </el-tag>
+                </template>
             </el-table-column>
             <el-table-column
-                prop="address"
+                prop="pubdate"
                 label="发布时间">
             </el-table-column>
             <el-table-column
                 prop="address"
                 label="操作">
+                <template>
+                    <el-button type="danger" size="mini">删除</el-button>
+                    <el-button type="primary" size="mini">编辑</el-button>
+                </template>
             </el-table-column>
         </el-table>
     </el-card>
@@ -74,6 +94,7 @@
 
 <script>
 export default {
+  name: 'article',
   data () {
     return {
       filterForm: {
@@ -83,30 +104,45 @@ export default {
         end_pubdate: ''
       },
       rangeDate: '',
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      articles: [],
+      articleStatus: [
+        {
+          label: '草稿'
+        },
+        {
+          label: '待审核'
+        },
+        {
+          label: '审核通过'
+        },
+        {
+          label: '审核失败'
+        },
+        {
+          label: '已删除'
+        }
+      ]
     }
   },
-  created: {
-
+  created () {
+    this.loadArticles()
   },
   methods: {
-
+    loadArticles () {
+      const token = window.localStorage.getItem('user-token')
+      this.$axios({
+        url: '/articles',
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }).then(res => {
+        console.log(res)
+        this.articles = res.data.data.results
+      }).catch(err => {
+        console.log('数据错误', err)
+      })
+    }
   }
 }
 </script>

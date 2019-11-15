@@ -32,7 +32,7 @@
 export default {
   methods: {
     onLogout () {
-      this.$confirm('确认推出吗？', '退出提示', {
+      this.$confirm('确认退出吗？', '退出提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
