@@ -26,8 +26,10 @@
                 v-model="rangeDate"
                 type="daterange"
                 range-separator="-"
+                value-format:yyyy-MM-dd
                 start-placeholder="开始日期"
-                end-placeholder="结束日期">
+                end-placeholder="结束日期"
+                value-format="yyyy-MM-dd">
                 </el-date-picker>
             </el-form-item>
             <el-form-item>
@@ -38,63 +40,74 @@
     <!-- /筛选数据 -->
     <!-- 文章列表 -->
     <el-card class="box-card">
-        <div slot="header" class="clesrfix">
-            <span>共找到59806条符合条件的内容</span>
-        </div>
-        <el-table
+      <div slot="header" class="clesrfix">
+          <span>共找到{{ this.totalCount }}条符合条件的内容</span>
+      </div>
+      <el-table
         :data="articles"
-        style="width: 100%">
-            <el-table-column
-                prop="date"
-                label="封面"
-                width="180">
-                <template slot-scope="scope">
-                    <img width='60' :src="scope.row.cover.images[0]">
-                </template>
-            </el-table-column>
-            <el-table-column
-                prop="title"
-                label="标题"
-                width="180">
-            </el-table-column>
-            <el-table-column
-                prop="status"
-                label="状态">
-                <template slot-scope="scope">
-                    <!-- <span v-show="scope.row.status===0">草稿</span>
-                    <span v-show="scope.row.status===1">待审核</span>
-                    <span v-show="scope.row.status===2">审核通过</span>
-                    <span v-show="scope.row.status===3">审核失败</span>
-                    <span v-show="scope.row.status===4">已删除</span> -->
+        style="width: 100%"
+        v-loading='loading'
+      >
+        <el-table-column
+            prop="date"
+            label="封面"
+            width="180">
+            <template slot-scope="scope">
+                <img width='60' :src="scope.row.cover.images[0]">
+            </template>
+        </el-table-column>
+        <el-table-column
+            prop="title"
+            label="标题"
+            width="180">
+        </el-table-column>
+        <el-table-column
+            prop="status"
+            label="状态">
+            <template slot-scope="scope">
+                <!-- <span v-show="scope.row.status===0">草稿</span>
+                <span v-show="scope.row.status===1">待审核</span>
+                <span v-show="scope.row.status===2">审核通过</span>
+                <span v-show="scope.row.status===3">审核失败</span>
+                <span v-show="scope.row.status===4">已删除</span> -->
 
-                    <!-- <span>{{ articleStatus[scope.row.status].label }}</span> -->
+                <!-- <span>{{ articleStatus[scope.row.status].label }}</span> -->
 
-                    <el-tag :type="articleStatus[scope.row.status].type">
-                        {{ articleStatus[scope.row.status].label }}
-                    </el-tag>
-                </template>
-            </el-table-column>
-            <el-table-column
-                prop="pubdate"
-                label="发布时间">
-            </el-table-column>
-            <el-table-column
-                prop="address"
-                label="操作">
-                <template>
-                    <el-button type="danger" size="mini">删除</el-button>
-                    <el-button type="primary" size="mini">编辑</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
+                <el-tag :type="articleStatus[scope.row.status].type">
+                    {{ articleStatus[scope.row.status].label }}
+                </el-tag>
+            </template>
+        </el-table-column>
+        <el-table-column
+            prop="pubdate"
+            label="发布时间">
+        </el-table-column>
+        <el-table-column
+            prop="address"
+            label="操作">
+            <template>
+                <el-button type="danger" size="mini">删除</el-button>
+                <el-button type="primary" size="mini">编辑</el-button>
+            </template>
+        </el-table-column>
+      </el-table>
     </el-card>
     <!-- /文章列表 -->
+    <!-- 分页 -->
+    <el-pagination
+      background
+      layout="prev, pager, next"
+      :total="totalCount"
+      @current-change="onPageChange"
+      :disabled="loading">
+    </el-pagination>
+    <!-- /分页 -->
 </div>
 </template>
 
 <script>
 export default {
-  name: 'article',
+  name: 'Article',
   data () {
     return {
       filterForm: {
@@ -107,41 +120,62 @@ export default {
       articles: [],
       articleStatus: [
         {
+          type: '',
           label: '草稿'
         },
         {
+          type: 'info',
           label: '待审核'
         },
         {
+          type: 'success',
           label: '审核通过'
         },
         {
+          type: 'warning',
           label: '审核失败'
         },
         {
+          type: 'danger',
           label: '已删除'
         }
-      ]
+      ],
+      totalCount: 0, // 数据总页数
+      loading: true, // 表格的  loading 状态
+      page: 1
     }
   },
   created () {
     this.loadArticles()
   },
   methods: {
-    loadArticles () {
+    loadArticles (page = 1) {
+      this.loading = true
       const token = window.localStorage.getItem('user-token')
       this.$axios({
         url: '/articles',
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`
+        },
+        // Query参数
+        params: {
+          page,
+          per_page: 10
         }
       }).then(res => {
         console.log(res)
         this.articles = res.data.data.results
+        this.totalCount = res.data.data.total_count
       }).catch(err => {
         console.log('数据错误', err)
+      }).finally(() => { // 无论成功还是失败，最终都要执行
+        // 停止 loading
+        this.loading = false
       })
+    },
+    onPageChange (page) {
+      this.loadArticles(page)
     }
   }
 }

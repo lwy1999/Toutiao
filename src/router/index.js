@@ -46,9 +46,10 @@ const router = new VueRouter({
   routes
 })
 router.beforeEach((to, from, next) => {
-//  参数1：to ：表示路由对象
-//  参数2：from：表示正要离开的路由
-//  参数3：next： 是一个方法，用于路由放行
+  Nprofress.start()
+  //  参数1：to ：表示路由对象
+  //  参数2：from：表示正要离开的路由
+  //  参数3：next： 是一个方法，用于路由放行
   // 如果是访问页面，则执行
   if (to.path === '/') {
     return next()
@@ -61,6 +62,7 @@ router.beforeEach((to, from, next) => {
   } else {
     // 没有token就跳转到登录页
     next('/')
+    Nprofress.done()
   }
   router.afterEach((to, from) => {
     Nprofress.done()
