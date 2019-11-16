@@ -147,7 +147,8 @@ export default {
       totalCount: 0, // 数据总页数
       loading: true, // 表格的  loading 状态
       page: 1,
-      channels: {}
+      channels: {},
+      rangeData: []
     }
   },
   created () {
@@ -169,7 +170,9 @@ export default {
           page,
           per_page: 10,
           status: this.filterForm.status, // 文章状态
-          channel_id: this.filterForm.channel_id
+          channel_id: this.filterForm.channel_id,
+          begin_pubdate: this.rangeDate ? this.rangeDate[0] : null,
+          end_pubdate: this.rangeDate ? this.rangeDate[0] : null
         }
       }).then(res => {
         // console.log(res)
