@@ -91,8 +91,8 @@
         <el-table-column
             prop="address"
             label="操作">
-            <template>
-                <el-button type="danger" size="mini">删除</el-button>
+            <template slot-scope="scope">
+                <el-button type="danger" size="mini" @click="onDelete(scope.row.id)">删除</el-button>
                 <el-button type="primary" size="mini">编辑</el-button>
             </template>
         </el-table-column>
@@ -146,7 +146,7 @@ export default {
       ],
       totalCount: 0, // 数据总页数
       loading: true, // 表格的  loading 状态
-      page: 1,
+      page: 0,
       channels: {},
       rangeData: []
     }
@@ -156,6 +156,7 @@ export default {
     this.loadChannels()
   },
   methods: {
+    // 数据加载
     loadArticles (page = 1) {
       this.loading = true
       const token = window.localStorage.getItem('user-token')
@@ -185,9 +186,12 @@ export default {
         this.loading = false
       })
     },
+    // 数据分页
     onPageChange (page) {
+      this.page = page
       this.loadArticles(page)
     },
+    // 筛选频道
     loadChannels () {
       this.$axios({
         method: 'GET',
@@ -197,6 +201,19 @@ export default {
         this.channels = res.data.data.channels
       }).catch(err => {
         console.log(err, '数据错误')
+      })
+    },
+    onDelete (articleId) {
+      this.$axios({
+        method: 'DELETE',
+        url: `/articles/${articleId}`,
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem('user-token')}`
+        }
+      }).then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log(err, '删除失败')
       })
     }
   }
