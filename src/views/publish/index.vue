@@ -9,7 +9,11 @@
           <el-input v-model='article.title'></el-input>
         </el-form-item>
         <el-form-item label="内容">
-          <el-input type="textarea" v-model='article.content'></el-input>
+          <quill-editor
+            v-model="article.content"
+            ref="myQuillEditor"
+            :options='editorOption'
+          ></quill-editor>
         </el-form-item>
         <el-form-item label="频道">
             <el-select v-model="article.channel_id" placeholder="请选择频道">
@@ -28,8 +32,8 @@
           </el-radio-group>
         </el-form-item> -->
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">发表</el-button>
-          <el-button>存入草稿</el-button>
+          <el-button type="primary" @click="onSubmit(false)">发表</el-button>
+          <el-button @click="onSubmit(true)">存入草稿</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -37,8 +41,17 @@
 </template>
 
 <script>
+// 加载富文本编辑器样式
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+// 加载富文本编辑器的核心组件
+import { quillEditor } from 'vue-quill-editor'
 export default {
   name: 'PublishArticle',
+  components: {
+    quillEditor
+  },
   data () {
     return {
       article: {
@@ -47,9 +60,11 @@ export default {
         cover: {
           type: 0, // 封面类型 -1 自动  0- 无图 1- 1张 3- 3张
           images: []// 图片。无图就是空数组
-        }
+        },
+        channel_id: ''
       },
-      channels: {}
+      channels: [],
+      editorOption: {} // 富文本编辑器的配置选项对象
     }
   },
   created () {
@@ -68,8 +83,24 @@ export default {
         console.log(err, '数据错误')
       })
     },
-    onSubmit () {
-      console.log('submit!')
+    onSubmit (draft) {
+      // console.log('submit!')
+      this.$axios({
+        method: 'POST',
+        url: '/articles',
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem('user-token')}`
+        },
+        // query 参数
+        params: {
+          draft
+        },
+        data: this.article
+      }).then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log(err, '数据错误')
+      })
     }
   }
 }

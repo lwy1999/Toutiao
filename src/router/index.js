@@ -64,9 +64,9 @@ router.beforeEach((to, from, next) => {
     next('/')
     Nprofress.done()
   }
-  router.afterEach((to, from) => {
-    Nprofress.done()
-  })
+})
+router.afterEach((to, from) => {
+  Nprofress.done()
 })
 
 export default router

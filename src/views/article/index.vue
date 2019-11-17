@@ -212,6 +212,7 @@ export default {
         }
       }).then(res => {
         console.log(res)
+        this.loadArticles()
       }).catch(err => {
         console.log(err, '删除失败')
       })
