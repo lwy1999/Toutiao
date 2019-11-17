@@ -159,13 +159,13 @@ export default {
     // 数据加载
     loadArticles (page = 1) {
       this.loading = true
-      const token = window.localStorage.getItem('user-token')
+      // const token = window.localStorage.getItem('user-token')
       this.$axios({
         url: '/articles',
         method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
+        // headers: {
+        //   Authorization: `Bearer ${token}`
+        // },
         // Query参数
         params: {
           page,
@@ -206,10 +206,10 @@ export default {
     onDelete (articleId) {
       this.$axios({
         method: 'DELETE',
-        url: `/articles/${articleId}`,
-        headers: {
-          Authorization: `Bearer ${window.localStorage.getItem('user-token')}`
-        }
+        url: `/articles/${articleId}`
+        // headers: {
+        //   Authorization: `Bearer ${window.localStorage.getItem('user-token')}`
+        // }
       }).then(res => {
         console.log(res)
         this.loadArticles()
