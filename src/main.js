@@ -29,7 +29,7 @@ axios.interceptors.request.use(function (config) {
   // 请求拦截器函数中的 config 是本次请求相关的配置对象
   // config 是最后发给我们发给后端的数据配置
   // 可以在拦截中对 config 统一配置
-  console.log('请求拦截器', config)
+  // console.log('请求拦截器', config)
   // 获取存储在本地的 user-token
   const token = window.localStorage.getItem('user-token')
   // 统一添加请求头

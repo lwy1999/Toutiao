@@ -17,15 +17,18 @@
                 </el-radio-group>
             </el-form-item>
             <el-form-item label="频道列表">
-                <el-select v-model="filterForm.channel_id" placeholder="请选择频道">
-                  <el-option label="所有频道" :value="null"></el-option>
-                  <el-option
-                    :label="channel.name"
-                    :value="channel.id"
-                    v-for=" channel in channels"
-                    :key="channel.id"
-                  ></el-option>
-                </el-select>
+              <!-- <el-select v-model="filterForm.channel_id" placeholder="请选择频道">
+                <el-option label="所有频道" :value="null"></el-option>
+                <el-option
+                  :label="channel.name"
+                  :value="channel.id"
+                  v-for=" channel in channels"
+                  :key="channel.id"
+                ></el-option>
+              </el-select> -->
+              <channel-select
+                v-model="filterForm.channel_id"
+              ></channel-select>
             </el-form-item>
             <el-form-item label="时间选择">
                 <el-date-picker
@@ -112,8 +115,13 @@
 </template>
 
 <script>
+// import ChannelSelect form '@/components/channel-select'
+import ChannelSelect from '@/components/channel-select'
 export default {
   name: 'Article',
+  components: {
+    ChannelSelect
+  },
   data () {
     return {
       filterForm: {
@@ -146,14 +154,14 @@ export default {
       ],
       totalCount: 0, // 数据总页数
       loading: true, // 表格的  loading 状态
-      page: 0,
-      channels: {},
-      rangeData: []
+      page: 0
+      // channels: {},
+      // rangeData: []
     }
   },
   created () {
     this.loadArticles()
-    this.loadChannels()
+    // this.loadChannels()
   },
   methods: {
     // 数据加载
@@ -191,18 +199,19 @@ export default {
       this.page = page
       this.loadArticles(page)
     },
-    // 筛选频道
-    loadChannels () {
-      this.$axios({
-        method: 'GET',
-        url: '/channels'
-      }).then(res => {
-        // console.log(res)
-        this.channels = res.data.data.channels
-      }).catch(err => {
-        console.log(err, '数据错误')
-      })
-    },
+    // // 筛选频道
+    // loadChannels () {
+    //   this.$axios({
+    //     method: 'GET',
+    //     url: '/channels'
+    //   }).then(res => {
+    //     // console.log(res)
+    //     this.channels = res.data.data.channels
+    //   }).catch(err => {
+    //     console.log(err, '数据错误')
+    //   })
+    // },
+    // 删除文章
     onDelete (articleId) {
       this.$axios({
         method: 'DELETE',

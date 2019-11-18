@@ -16,14 +16,15 @@
           ></quill-editor>
         </el-form-item>
         <el-form-item label="频道">
-            <el-select v-model="article.channel_id" placeholder="请选择频道">
+            <!-- <el-select v-model="article.channel_id" placeholder="请选择频道">
               <el-option
                 :label="channel.name"
                 :value="channel.id"
                 v-for=" channel in channels"
                 :key="channel.id"
               ></el-option>
-            </el-select>
+            </el-select> -->
+            <channel-select v-model="article.channel_id"></channel-select>
         </el-form-item>
         <!-- <el-form-item label="封面">
           <el-radio-group>
@@ -47,10 +48,12 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 // 加载富文本编辑器的核心组件
 import { quillEditor } from 'vue-quill-editor'
+import ChannelSelect from '@/components/channel-select'
 export default {
   name: 'PublishArticle',
   components: {
-    quillEditor
+    quillEditor,
+    ChannelSelect
   },
   data () {
     return {
@@ -64,25 +67,29 @@ export default {
         channel_id: ''
       },
       channels: [],
-      editorOption: {} // 富文本编辑器的配置选项对象
+      editorOption: {}, // 富文本编辑器的配置选项对象
+      // id: '' // 编辑文章的id
+      id: window.location.hash.split('=')[1]
     }
   },
   created () {
-    this.loadChannels()
+    // this.loadChannels()
+    this.id = window.location.hash.split('=')[1]
   },
   methods: {
-    // 筛选频道
-    loadChannels () {
-      this.$axios({
-        method: 'GET',
-        url: '/channels'
-      }).then(res => {
-        // console.log(res)
-        this.channels = res.data.data.channels
-      }).catch(err => {
-        console.log(err, '数据错误')
-      })
-    },
+    // // 筛选频道
+    // loadChannels () {
+    //   this.$axios({
+    //     method: 'GET',
+    //     url: '/channels'
+    //   }).then(res => {
+    //     // console.log(res)
+    //     this.channels = res.data.data.channels
+    //   }).catch(err => {
+    //     console.log(err, '数据错误')
+    //   })
+    // },
+    // 发布文章
     onSubmit (draft) {
       // console.log('submit!')
       this.$axios({
@@ -106,6 +113,8 @@ export default {
 }
 </script>
 
-<style>
-
-</style>
+<style lang="less" >
+.ql-editor{
+  height: 350px;
+}
+</style>>
