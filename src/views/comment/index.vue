@@ -44,6 +44,15 @@
             </el-table-column>
         </el-table>
     </el-card>
+    <!-- 分页 -->
+    <el-pagination
+      background
+      layout="prev, pager, next"
+      :total="totalCount"
+      @current-change="onPageChange"
+      :disabled="loading">
+    </el-pagination>
+    <!-- /分页 -->
 </div>
 </template>
 
@@ -54,23 +63,34 @@ export default {
   props: {},
   data () {
     return {
-      articles: []
+      articles: [],
+      totalCount: 0, // 数据总页数
+      loading: true, // 表格的 loading 状态
+      page: 0
     }
   },
   created () {
     this.loadArticles()
   },
   methods: {
-    loadArticles () {
+    loadArticles (page = 1) {
+      this.loading = true
       this.$axios({
         method: 'GET',
         url: '/articles',
         params: {
+          page,
+          per_page: 10,
           response_type: 'comment'
         }
       }).then(res => {
         // console.log(res)
         this.articles = res.data.data.results
+        this.totalCount = res.data.data.total_count
+      }).catch(() => {
+        console.log('获取数据失败')
+      }).finally(() => {
+        this.loading = false
       })
     },
     onStatusChange (article) {
@@ -92,6 +112,11 @@ export default {
       }).catch(() => {
         this.$message.erroe('操作失败')
       })
+    },
+    // 数据分页
+    onPageChange (page) {
+      this.page = page
+      this.loadArticles(page)
     }
   }
 }
