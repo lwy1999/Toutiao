@@ -66,15 +66,15 @@ export default {
         },
         channel_id: ''
       },
-      channels: [],
-      editorOption: {}, // 富文本编辑器的配置选项对象
-      // id: '' // 编辑文章的id
-      id: window.location.hash.split('=')[1]
+      channel: [],
+      editorOption: {}// 富文本编辑器的配置选项对象
     }
   },
   created () {
     // this.loadChannels()
-    this.id = window.location.hash.split('=')[1]
+    if (this.$route.params.articleId) {
+      this.loadArticle()
+    }
   },
   methods: {
     // // 筛选频道
@@ -91,7 +91,22 @@ export default {
     // },
     // 发布文章
     onSubmit (draft) {
-      // console.log('submit!')
+      if (this.$route.params.articleId) {
+        this.updateArticle()
+      } else {
+        this.addArticle()
+      }
+    },
+    loadArticle () {
+      this.$axios({
+        url: `/articles/${this.$route.params.articleId}`,
+        method: 'GET'
+      }).then(res => {
+        this.article = res.data.data
+        console.log(this.article)
+      })
+    },
+    addArticle (draft) {
       this.$axios({
         method: 'POST',
         url: '/articles',
@@ -107,6 +122,24 @@ export default {
         console.log(res)
       }).catch(err => {
         console.log(err, '数据错误')
+      })
+    },
+    updateArticle (draft) {
+      this.$axios({
+        method: 'PUT',
+        url: `/articles/${this.$route.params.articleId}`,
+        params: {
+          draft
+        },
+        data: this.article
+      }).then(res => {
+        this.$message({
+          type: 'success',
+          message: '更新成功'
+        })
+      }).catch(err => {
+        console.log(err)
+        this.$message.error('更新失败')
       })
     }
   }

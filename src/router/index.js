@@ -28,6 +28,10 @@ const routes = [
       {
         path: '/article',
         component: Article
+      },
+      {
+        path: '/publish/:articleId',
+        component: Publish
       }
     ]
   }
