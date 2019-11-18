@@ -8,7 +8,8 @@
       </el-header>
       <el-main>
         <!-- 二级路由容器，子路由会渲染到这里 -->
-        <router-view></router-view>
+        <!-- :key="$route.path" 禁止路由缓存 -->
+        <router-view :key="$route.path"></router-view>
       </el-main>
     </el-container>
   </el-container>
