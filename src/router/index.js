@@ -6,6 +6,7 @@ import Home from '@/views/home'
 import Article from '@/views/article'
 import Publish from '@/views/publish'
 import Nprofress from 'nprogress'
+import Comment from '@/views/comment'
 
 Vue.use(VueRouter)
 
@@ -32,6 +33,10 @@ const routes = [
       {
         path: '/publish/:articleId',
         component: Publish
+      },
+      {
+        path: '/comment',
+        component: Comment
       }
     ]
   }
