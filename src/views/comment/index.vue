@@ -38,8 +38,11 @@
                 prop="address"
                 label="操作"
                 width="150">
-                <template>
-                    <el-button type="primary">修改</el-button>
+                <template slot-scope="scope">
+                    <el-button
+                      type="primary"
+                      @click="$router.push('/comment/'+scope.row.id)"
+                    >修改</el-button>
                 </template>
             </el-table-column>
         </el-table>

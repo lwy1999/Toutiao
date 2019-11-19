@@ -7,8 +7,8 @@ import './styles/index.less'
 import axios from 'axios'
 import 'nprogress/nprogress.css' // 引入 nprogress.css样式
 import JSONbig from 'json-bigint'
+import moment from 'moment'
 
-Vue.config.productionTip = false
 Vue.use(ElementUI)
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0/'
 axios.defaults.transformResponse = [function (data, headers) {
@@ -43,6 +43,11 @@ axios.interceptors.request.use(function (config) {
   return Promise.reject(err)
 })
 Vue.prototype.$axios = axios
+Vue.config.productionTip = false
+// 全局过滤器
+Vue.filter('dateFormat', value => {
+  return moment(value).format('YYYY-MM-DD')
+})
 
 new Vue({
   router,
