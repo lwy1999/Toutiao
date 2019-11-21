@@ -3,7 +3,7 @@
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span>素材管理</span>
-        <el-button style="float: right; padding: 3px 0" type="text">上传图片</el-button>
+        <!-- <el-button style="float: right; padding: 3px 0" type="text">上传图片</el-button> -->
         <el-upload
           class="upload-demo"
           style="float: right;"
@@ -13,8 +13,10 @@
           :on-success="onUploadSuccess"
           :show-file-list="false"
         >
-          <el-button size="small" type="primary">点击上传</el-button>
+          <!-- <el-button size="small" type="primary">点击上传</el-button> -->
         </el-upload>
+        <el-button style="float: right; margin-right: 10px" type="success" @click="onUpload">点击上传</el-button>
+        <input type="file" hidden ref="file" @change="onFileChange" />
       </div>
       <div style="margin-bottom: 20px;">
         <el-radio-group v-model="type" @change="onFind">
@@ -137,7 +139,31 @@ export default {
         })
     },
     onUploadSuccess () {
+      // 手动触发DOM的点击事件
       this.loadImages(this.type !== '全部')
+    },
+    onUpload () {
+      this.$refs.file.click()
+    },
+    onFileChange () {
+      // 获取用户选择的那个文件对象
+      const fileObj = this.$refs.file.files[0]
+      // 创建一个表单数据对象
+      const formData = new FormData()
+      // 手动网表单数据中添加成员
+      formData.append('image', fileObj)
+      // 请求上传
+      this.$axios({
+        method: 'POST',
+        url: '/user/images',
+        data: formData
+      })
+        .then(res => {
+          this.loadImages(this.type !== '全部')
+        })
+        .catch(() => {
+          this.$message.error('上传失败')
+        })
     }
   }
 }
