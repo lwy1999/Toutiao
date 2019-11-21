@@ -49,7 +49,7 @@ export default {
       comments: []
     }
   },
-  params: {
+  props: {
     acticleId: {
       type: String,
       requird: true
