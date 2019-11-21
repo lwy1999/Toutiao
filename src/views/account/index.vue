@@ -52,7 +52,28 @@ export default {
   },
   methods: {
     onSubmit () {
-      console.log('保存')
+      // const name = this.user.name
+      // const email = this.user.email
+      // const intro = this.user.intro
+      const { name, email, intor } = this.user
+      this.$axios({
+        method: 'PATCH',
+        url: '/user/profile',
+        data: {
+          name,
+          email,
+          intor
+        }
+      })
+        .then(res => {
+          this.$message({
+            type: 'success',
+            message: '修改成功'
+          })
+        })
+        .catch(() => {
+          this.$message.error('修改信息失败')
+        })
     },
     loadUserProfile () {
       this.$axios({
