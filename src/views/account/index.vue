@@ -6,12 +6,12 @@
           class="avatar-uploader"
           action="https://jsonplaceholder.typicode.com/posts/"
           :show-file-list="false"
+          :http-request="onUpload"
         >
-          <img
-            width="100"
-            src="http://toutiao.meiduo.site/FuLZH0vzKbdXi-On88NArXegOjXk"
-            class="avatar"
-          />
+          <img width="100" :src="user.photo" class="avatar" />
+          <!-- <i class="el-icon-plus avatar-uploader-icon"></i> -->
+          <i hidden class="vatar-uploader-icon"></i>
+          <!-- <p hidden>点击选择上传用户头像</p> -->
         </el-upload>
       </el-form-item>
       <el-form-item label="用户昵称">
@@ -51,6 +51,7 @@ export default {
     this.loadUserProfile()
   },
   methods: {
+    // 修改账户信息
     onSubmit () {
       // const name = this.user.name
       // const email = this.user.email
@@ -86,6 +87,22 @@ export default {
         })
         .catch(() => {
           this.$message.error('获取数据失败')
+        })
+    },
+    onUpload (config) {
+      const fd = new FormData()
+      fd.append('photo', config.file)
+      this.$axios({
+        method: 'PATCH',
+        url: '/user/photo',
+        data: fd
+      })
+        .then(res => {
+          // 更新图片地址
+          this.user.photo = res.data.data.photo
+        })
+        .catch(() => {
+          this.$message.error('上传失败')
         })
     }
   }
