@@ -75,7 +75,7 @@ export default {
         title: '', // 标题
         content: '', // 内容
         cover: {
-          type: 0, // 封面类型 -1 自动  0- 无图 1- 1张 3- 3张
+          type: 1, // 封面类型 -1 自动  0- 无图 1- 1张 3- 3张
           images: []// 图片。无图就是空数组
         },
         channel_id: ''
